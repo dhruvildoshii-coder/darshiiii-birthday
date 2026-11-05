@@ -64,7 +64,7 @@ footer{padding:30px 20px 65px;text-align:center;color:#b58da1;font-size:13px}
 </head>
 <body>
 <div class="sparkle s1">✧</div><div class="sparkle s2">♡</div><div class="sparkle s3">✦</div>
-<div id="player" aria-hidden="true"></div>
+<audio id="birthdayAudio" preload="auto"></audio>
 <div id="quizGate"><div class="quiz-card" id="quizCard"></div></div>
 <main id="mainExperience">
 <section class="hero" id="top">
@@ -133,14 +133,13 @@ const quizCard=document.getElementById('quizCard');
 const quizGate=document.getElementById('quizGate');
 const mainExperience=document.getElementById('mainExperience');
 let quizStep=-1;
-const quizSongs=['kPtn26x8TZM','4KFVySixs_E','jFmi69lb8sQ'];
+const quizSongs=['dooriyan.mp3','raat-bhar.mp3','hona-tha-pyaar.mp3'];
 function renderQuiz(){
  if(quizStep===-1){
   quizCard.innerHTML='<div style="font-size:42px;margin-bottom:12px">🎀 ✨ 💗</div><div class="quiz-progress">A LITTLE SURPRISE FOR YOU</div><h1>Are you ready?</h1><p>Before we get to your birthday surprise, I have three tiny questions for you. 🥹</p><div class="quiz-options"><button class="quiz-option" id="readyYes">Yessss, I’m ready! ♡</button></div>';
   document.getElementById('readyYes').onclick=()=>{quizStep=0;playQuizSong(0);renderQuiz();};
   return;
  }
-
  const progress=['A LITTLE CHECK-IN · 01 / 03','JUST ONE MORE · 02 / 03','LAST QUESTION · 03 / 03'];
  const screens=[
  {q:'Do you miss me?',opts:['Of course','No'],bad:'Sorry, try again. You have to miss me, you don’t have an option. 😌',good:'Of course I miss you too, perfect choice. 🤍'},
@@ -154,38 +153,18 @@ function renderQuiz(){
 }
 renderQuiz();
 
-// Songs for the three-question birthday quiz, followed by the original birthday-page song.
-const videoId = "A2p-V7uXiG4";
-let playerReady = false;
-let musicRequested = false;
-let currentVideoId = videoId;
-const tag = document.createElement('script');
-tag.src = "https://www.youtube.com/iframe_api";
-document.head.appendChild(tag);
-function playTrack(id){
-  currentVideoId=id;
-  musicRequested=true;
-  if(playerReady && window.ytPlayer){
-    window.ytPlayer.unMute();
-    window.ytPlayer.setVolume(65);
-    window.ytPlayer.loadVideoById({videoId:id});
-  }
+const birthdayAudio=document.getElementById('birthdayAudio');
+function playTrack(file){
+ birthdayAudio.pause();
+ birthdayAudio.src=file;
+ birthdayAudio.loop=true;
+ birthdayAudio.volume=0.75;
+ const p=birthdayAudio.play();
+ if(p && p.catch)p.catch(()=>{});
 }
 function playQuizSong(index){playTrack(quizSongs[index]);}
-function stopQuizMusic(){musicRequested=false;if(playerReady && window.ytPlayer)window.ytPlayer.pauseVideo();}
-function startMusic(){playTrack(videoId);}
-function onYouTubeIframeAPIReady(){
-  window.ytPlayer = new YT.Player('player', {
-    height:'1', width:'1', videoId:currentVideoId,
-    playerVars:{autoplay:0, controls:0, playsinline:1, rel:0, loop:1, playlist:currentVideoId, origin:location.origin},
-    events:{onReady:()=>{
-      playerReady=true;
-      if(musicRequested)playTrack(currentVideoId);
-    }, onStateChange:e=>{
-      if(e.data===YT.PlayerState.ENDED && musicRequested)window.ytPlayer.seekTo(0,true);
-    }}
-  });
-}
+function stopQuizMusic(){birthdayAudio.pause();}
+function startMusic(){playTrack('dil-ye-bekarar.mp3');}
 document.getElementById('openSurprise').addEventListener('click',()=>{
   startMusic();
   document.getElementById('birthday').scrollIntoView({behavior:'smooth'});
